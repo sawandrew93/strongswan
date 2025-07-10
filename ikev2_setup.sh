@@ -46,7 +46,7 @@ echo "[+] Writing /etc/ipsec.conf..."
 sudo tee /etc/ipsec.conf > /dev/null <<EOF
 config setup
     charondebug="ike 1, knl 1, cfg 0"
-    uniqueids=no
+    uniqueids=yes
 
 conn ikev2-vpn
     auto=add
