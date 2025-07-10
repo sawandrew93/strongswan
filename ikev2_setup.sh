@@ -87,7 +87,7 @@ sudo sysctl -w net.ipv4.ip_forward=1
 sudo sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/' /etc/sysctl.conf
 
 echo "[+] Configuring UFW for NAT and VPN ports..."
-IFACE=$(ip route show default | awk '{print $5}')
+PUBLIC_IF=$(ip route get 8.8.8.8 | awk '{print $5; exit}')
 sudo ufw allow OpenSSH
 sudo ufw allow 500,4500/udp
 
@@ -104,7 +104,7 @@ sudo tee /etc/ufw/before.rules > /dev/null <<EOF
 :POSTROUTING ACCEPT [0:0]
 
 # Forward VPN traffic through eth0
--A POSTROUTING -s 10.10.10.0/24 -o eth0 -j MASQUERADE
+-A POSTROUTING -s 10.10.10.0/24 -o "$PUBLIC_IF" -j MASQUERADE
 
 COMMIT
 
@@ -183,5 +183,6 @@ sudo ufw enable
 echo "[+] Restarting StrongSwan..."
 sudo systemctl restart strongswan-starter.service
 sudo systemctl enable strongswan-starter.service
-
+cat /etc/ipsec.d/cacerts/ca-cert.pem > ca-cert.pem
+echo "Copy ca-cert.pem file to your device."
 echo "[✔] Setup complete! Your VPN server at $SERVER_IP is ready."
