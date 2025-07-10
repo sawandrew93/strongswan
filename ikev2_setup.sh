@@ -177,8 +177,8 @@ COMMIT
 EOF
 
 echo "[+] Reloading UFW..."
-sudo ufw disable
-sudo ufw enable
+sudo ufw --force disable
+sudo ufw --force enable
 
 echo "[+] Restarting StrongSwan..."
 sudo systemctl restart strongswan-starter.service
