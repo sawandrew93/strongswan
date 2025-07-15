@@ -175,7 +175,7 @@ sudo ufw --force enable
 
 
 #Configuring free-radius for authentication
-sudo apt install freeradius freeradius-utils
+sudo apt install -y freeradius freeradius-utils
 sudo systemctl enable freeradius
 sudo systemctl start freeradius
 
@@ -191,9 +191,9 @@ EOF
 
 echo "[+] Writing /etc/freeradius/3.0/users..."
 sudo tee -a /etc/freeradius/3.0/users <<EOF
-user01 Cleartext-Password := "vanguard@929"
-user02 Cleartext-Password := "vanguard@929"
-user03 Cleartext-Password := "vanguard@929"
+user01 Cleartext-Password := "asd123!@#"
+user02 Cleartext-Password := "asd123!@#"
+user03 Cleartext-Password := "asd123!@#"
 EOF
 
 
