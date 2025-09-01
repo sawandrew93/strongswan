@@ -103,9 +103,14 @@ sudo tee /etc/ufw/before.rules > /dev/null <<EOF
 *nat
 :POSTROUTING ACCEPT [0:0]
 
-# Forward VPN traffic through eth0
--A POSTROUTING -s 10.10.10.0/24 -o "$PUBLIC_IF" -j MASQUERADE
+# Forward VPN traffic through eth0 with MASQUERADE
+-A POSTROUTING -s 10.10.10.0/24 -o "eth0" -j MASQUERADE
 
+COMMIT
+
+*mangle
+# MSS clamping for Windows compatibility
+-A FORWARD --match policy --pol ipsec --dir in -s 10.10.10.0/24 -o eth0 -p tcp -m tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1200
 COMMIT
 
 *filter
@@ -114,10 +119,15 @@ COMMIT
 :ufw-before-forward - [0:0]
 :ufw-not-local - [0:0]
 
+# ==================== VPN CLIENT RULES ====================
+# Allow ALL forwarded traffic from VPN clients (this is the key rule)
+-A ufw-before-forward -s 10.10.10.0/24 -j ACCEPT
+
 # Allow IPsec traffic
 -A ufw-before-forward --match policy --pol ipsec --dir in --proto esp -s 10.10.10.0/24 -j ACCEPT
 -A ufw-before-forward --match policy --pol ipsec --dir out --proto esp -d 10.10.10.0/24 -j ACCEPT
 
+# ==================== BASE RULES ====================
 # allow all on loopback
 -A ufw-before-input -i lo -j ACCEPT
 -A ufw-before-output -o lo -j ACCEPT
@@ -164,12 +174,10 @@ COMMIT
 -A ufw-not-local -m limit --limit 3/min --limit-burst 10 -j ufw-logging-deny
 -A ufw-not-local -j DROP
 
-# allow MULTICAST mDNS for service discovery (be sure the MULTICAST line above
-# is uncommented)
+# allow MULTICAST mDNS for service discovery
 -A ufw-before-input -p udp -d 224.0.0.251 --dport 5353 -j ACCEPT
 
-# allow MULTICAST UPnP for service discovery (be sure the MULTICAST line above
-# is uncommented)
+# allow MULTICAST UPnP for service discovery
 -A ufw-before-input -p udp -d 239.255.255.250 --dport 1900 -j ACCEPT
 
 # don't delete the 'COMMIT' line or these rules won't be processed
