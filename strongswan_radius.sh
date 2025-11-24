@@ -169,6 +169,10 @@ COMMIT
 COMMIT
 EOF
 
+
+iface=$(ip route | awk '/default/ {print $5}')
+sed -i "s|eth0|${iface}|g" /etc/ufw/before.rules
+
 echo "[+] Reloading UFW..."
 sudo ufw --force disable
 sudo ufw --force enable
