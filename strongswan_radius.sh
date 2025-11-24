@@ -188,7 +188,7 @@ sudo cp /etc/freeradius/3.0/clients.conf /etc/freeradius/3.0/clients.conf.bak
 client_block="client strongswan {"
 client_conf="/etc/freeradius/3.0/clients.conf"
 
-if ! grep -q "$client_block" "$client_conf"; then
+if ! sudo grep -q "$client_block" "$client_conf"; then
   sudo tee -a "$client_conf" > /dev/null <<EOF
 client strongswan {
     ipaddr = 127.0.0.1
