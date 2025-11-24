@@ -185,20 +185,8 @@ sudo systemctl start freeradius
 
 echo "[+] Writing /etc/freeradius/3.0/clients.conf..."
 sudo cp /etc/freeradius/3.0/clients.conf /etc/freeradius/3.0/clients.conf.bak
-client_block="client strongswan {"
-client_conf="/etc/freeradius/3.0/clients.conf"
+sed -i '/client localhost {/,/^}/c\client strongswan {\n    ipaddr = 127.0.0.1\n    secret = vanguard@929\n    shortname = vpn-server\n}' /etc/freeradius/3.0/clients.conf
 
-if ! sudo grep -q "$client_block" "$client_conf"; then
-  sudo tee -a "$client_conf" > /dev/null <<EOF
-client strongswan {
-    ipaddr = 127.0.0.1
-    secret = vanguard@929
-    shortname = vpn-server
-}
-EOF
-else
-  echo "[+] Client strongswan already exists in $client_conf"
-fi
 
 
 # Example users
