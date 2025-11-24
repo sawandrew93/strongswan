@@ -171,7 +171,7 @@ EOF
 
 
 iface=$(ip route | awk '/default/ {print $5}')
-sed -i "s|eth0|${iface}|g" /etc/ufw/before.rules
+sudo sed -i "s|eth0|${iface}|g" /etc/ufw/before.rules
 
 echo "[+] Reloading UFW..."
 sudo ufw --force disable
@@ -214,10 +214,10 @@ echo "[+] Making backup and modifying /etc/strongswan.d/charon/eap-radius.conf..
 radius_conf="/etc/strongswan.d/charon/eap-radius.conf"
 
 # Backup
-cp "$radius_conf" "${radius_conf}.bak.$(date +%F_%H-%M-%S)"
+sudo cp "$radius_conf" "${radius_conf}.bak.$(date +%F_%H-%M-%S)"
 
 # Enable accounting
-sed -i \
+sudo sed -i \
     -e 's/^[[:space:]]*#\?[[:space:]]*accounting *= *.*/    accounting = yes/' \
     "$radius_conf"
 
