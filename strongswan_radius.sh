@@ -222,7 +222,7 @@ sudo sed -i \
     "$radius_conf"
 
 # Restart strongswan/charon
-systemctl restart strongswan-starter 2>/dev/null || systemctl restart ipsec
+sudo systemctl restart strongswan-starter 2>/dev/null || systemctl restart ipsec
 
 echo "RADIUS accounting enabled."
 
