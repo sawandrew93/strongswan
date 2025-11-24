@@ -201,11 +201,22 @@ user03 Cleartext-Password := "asd123!@#"
 EOF
 
 
-echo "[+] Writing /etc/strongswan.d/charon/eap-radius.conf..."
-sudo cp /etc/strongswan.d/charon/eap-radius.conf /etc/strongswan.d/charon/eap-radius.conf.bak
+echo "[+] Making backup and modifying /etc/strongswan.d/charon/eap-radius.conf..."
+radius_conf="/etc/strongswan.d/charon/eap-radius.conf"
 
-# 1. Uncomment accounting=yes line
-sudo sed -i '/^[[:space:]]*#accounting = yes/s/#//' /etc/strongswan.d/charon/eap-radius.conf
+# Backup
+cp "$radius_conf" "${radius_conf}.bak.$(date +%F_%H-%M-%S)"
+
+# Enable accounting
+sed -i \
+    -e 's/^[[:space:]]*#\?[[:space:]]*accounting *= *.*/    accounting = yes/' \
+    "$radius_conf"
+
+# Restart strongswan/charon
+systemctl restart strongswan-starter 2>/dev/null || systemctl restart ipsec
+
+echo "RADIUS accounting enabled."
+
 
 # 2. Replace empty servers block with configured server (with perfect indentation)
 sudo sed -i '/^[[:space:]]*servers {/,/^[[:space:]]*}/c\
@@ -216,7 +227,7 @@ sudo sed -i '/^[[:space:]]*servers {/,/^[[:space:]]*}/c\
             auth_port = 1812\
             acct_port = 1813\
         }\
-    }' /etc/strongswan.d/charon/eap-radius.conf
+    }' "$radius_conf"
 
 
 echo "[+] Restarting StrongSwan..."
