@@ -185,7 +185,7 @@ sudo systemctl start freeradius
 
 echo "[+] Writing /etc/freeradius/3.0/clients.conf..."
 sudo cp /etc/freeradius/3.0/clients.conf /etc/freeradius/3.0/clients.conf.bak
-sed -i '/client localhost {/,/^}/c\client strongswan {\n    ipaddr = 127.0.0.1\n    secret = vanguard@929\n    shortname = vpn-server\n}' /etc/freeradius/3.0/clients.conf
+sudo sed -i '/client localhost {/,/^}/c\client strongswan {\n    ipaddr = 127.0.0.1\n    secret = vanguard@929\n    shortname = vpn-server\n}' /etc/freeradius/3.0/clients.conf
 
 
 
