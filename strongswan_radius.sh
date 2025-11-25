@@ -93,6 +93,7 @@ sudo sed -i '/^[[:space:]]*servers {/,/^[[:space:]]*}/c\
 echo "[+] Restarting StrongSwan..."
 sudo systemctl restart strongswan-starter.service
 sudo systemctl enable strongswan-starter.service
+sudo systemctl restart freeradius.service
 cat /etc/ipsec.d/cacerts/ca-cert.pem > ca-cert.pem
 echo "Copy ca-cert.pem file to your device."
 echo "[✔] Setup complete! Your VPN server at $SERVER_IP is ready."
