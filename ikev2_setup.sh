@@ -87,7 +87,6 @@ sudo sysctl -w net.ipv4.ip_forward=1
 sudo sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/' /etc/sysctl.conf
 
 echo "[+] Configuring UFW for NAT and VPN ports..."
-PUBLIC_IF=$(ip route get 8.8.8.8 | awk '{print $5; exit}')
 sudo ufw allow OpenSSH
 sudo ufw allow 500,4500/udp
 
